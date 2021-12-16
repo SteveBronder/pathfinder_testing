@@ -30,3 +30,9 @@ Rscript ./examples/posterior_db/posterior_db_ex.R
 ```
 
 Hopefully, that should be it and you can then run the examples in this folder!
+
+To update the repo when submodules have been updated just run 
+
+```
+git submodule update --remote
+```

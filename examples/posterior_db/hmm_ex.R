@@ -26,18 +26,19 @@ ex_posterior = posteriordb::posterior("hmm_example-hmm_example", pdb_conn)
 ex_code_path = model_code_file_path(ex_posterior, framework = "stan")
 ex_mod = cmdstanr::cmdstan_model(ex_code_path, force_recompile=TRUE, cpp_options = list(stan_threads = TRUE))
 ex_data_file_path = data_file_path(ex_posterior)
+num_cores = floor(parallel::detectCores() / 2)
 
 ex_optimize = ex_mod$optimize(data = ex_data_file_path,
-  refresh = 5, algorithm = "lbfgs",
+  refresh = 5, algorithm = "lbfgs", threads = num_cores,
   iter = 50, history_size = 12, init_alpha = 0.0000001,
   init = 2)#, tol_obj = 0, tol_grad = 0, tol_param = 0, tol_rel_grad = 0, tol_rel_obj = 0)
 ex_optimize$summary()
+
 # Run path and sampler
-num_cores = floor(parallel::detectCores() / 2)
-ex_fit = ex_mod$pathfinder(algorithm = "multi", data = ex_data_file_path,
-  refresh = 5, threads = num_cores, num_paths = 16,
-  psis_draws = 10000, iter = 50, num_elbo_draws = 500, history_size = 6, init_alpha = 0.0000001,
-  num_draws = 2000, init = 2)#, tol_obj = 0, tol_grad = 0, tol_param = 0, tol_rel_grad = 0, tol_rel_obj = 0)
+ex_fit = ex_mod$pathfinder(algorithm = "single", data = ex_data_file_path,
+  refresh = 5, threads = num_cores, iter = 50, num_elbo_draws = 500,
+  history_size = 6, init_alpha = 0.0000001,
+  num_draws = 10000, init = 2)#, tol_obj = 0, tol_grad = 0, tol_param = 0, tol_rel_grad = 0, tol_rel_obj = 0)
 
 ex_fit$summary()
 

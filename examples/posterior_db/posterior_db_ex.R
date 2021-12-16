@@ -34,10 +34,10 @@ ex_optimize = ex_mod$optimize(data = ex_data_file_path,
   init = 2)#, tol_obj = 0, tol_grad = 0, tol_param = 0, tol_rel_grad = 0, tol_rel_obj = 0)
 ex_optimize$summary()
 # Run path and sampler
-ex_fit = ex_mod$pathfinder(algorithm = "multi", data = ex_data_file_path,
-  refresh = 5, threads = floor(parallel::detectCores() / 2), num_paths = 32,
-  psis_draws = 10000, iter = 40, num_elbo_draws = 500, history_size = 6, init_alpha = 0.0000001,
-  num_draws = 2000, init = 1)#, tol_obj = 0, tol_grad = 0, tol_param = 0, tol_rel_grad = 0, tol_rel_obj = 0)
+ex_fit = ex_mod$pathfinder(algorithm = "single", data = ex_data_file_path,
+  refresh = 5, threads = floor(parallel::detectCores() / 2),
+  iter = 40, num_elbo_draws = 500, history_size = 6, init_alpha = 0.0000001,
+  num_draws = 10000, init = 1)#, tol_obj = 0, tol_grad = 0, tol_param = 0, tol_rel_grad = 0, tol_rel_obj = 0)
 
 ex_fit$summary()
 
