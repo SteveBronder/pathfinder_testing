@@ -24,23 +24,24 @@ pdb_names = posterior_names(pdb_conn)
 
 ex_posterior = posteriordb::posterior("eight_schools-eight_schools_noncentered", pdb_conn)
 ex_code_path = model_code_file_path(ex_posterior, framework = "stan")
-ex_mod = cmdstanr::cmdstan_model(ex_code_path, force_recompile=TRUE)
+ex_mod = cmdstanr::cmdstan_model(ex_code_path, force_recompile=TRUE, cpp_options = list(stan_threads = TRUE))
 ex_data_file_path = data_file_path(ex_posterior)
 
+num_cores = floor(parallel::detectCores() / 2)
 ex_optimize = ex_mod$optimize(data = ex_data_file_path,
-  refresh = 5, algorithm = "lbfgs",
+  refresh = 5, algorithm = "lbfgs", threads = num_cores,
   iter = 50, history_size = 12, init_alpha = 0.0000001,
   init = 2)#, tol_obj = 0, tol_grad = 0, tol_param = 0, tol_rel_grad = 0, tol_rel_obj = 0)
 ex_optimize$summary()
 # Run path and sampler
 ex_fit = ex_mod$pathfinder(algorithm = "multi", data = ex_data_file_path,
-  refresh = 5, num_threads = floor(parallel::detectCores() / 2), num_paths = 32,
-  psis_draws = 10000, iter = 50, num_elbo_draws = 5000, history_size = 12, init_alpha = 0.0000001,
-  num_draws = 20000, init = 2)#, tol_obj = 0, tol_grad = 0, tol_param = 0, tol_rel_grad = 0, tol_rel_obj = 0)
+  refresh = 5, threads = floor(parallel::detectCores() / 2), num_paths = 32,
+  psis_draws = 10000, iter = 40, num_elbo_draws = 500, history_size = 6, init_alpha = 0.0000001,
+  num_draws = 2000, init = 1)#, tol_obj = 0, tol_grad = 0, tol_param = 0, tol_rel_grad = 0, tol_rel_obj = 0)
 
 ex_fit$summary()
 
-ex_fit_sample = ex_mod$sample(data = ex_data_file_path,
+ex_fit_sample = ex_mod$sample(data = ex_data_file_path, threads_per_chain = num_cores,
   parallel_chains = 5, iter_sampling = 2000, chains = 5)
 
 
