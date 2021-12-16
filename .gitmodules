@@ -1,8 +1,0 @@
-[submodule "cmdstan"]
-	path = cmdstan
-	url = git@github.com:stan-dev/cmdstan.git
-	branch = feature/multi-pathfinder
-[submodule "cmdstanr"]
-	path = cmdstanr
-	url = git@github.com:stan-dev/cmdstanr.git
-	branch = feature/pathfinder
