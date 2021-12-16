@@ -22,18 +22,21 @@ pdb_names = posterior_names(pdb_conn)
 
 # We will do HMM-example, though the below should work with all the others
 
-ex_posterior = posteriordb::posterior("hmm_example-hmm_example", pdb_conn)
+ex_posterior = posteriordb::posterior("eight_schools-eight_schools_noncentered", pdb_conn)
 ex_code_path = model_code_file_path(ex_posterior, framework = "stan")
-ex_mod = cmdstanr::cmdstan_model(ex_code_path)
+ex_mod = cmdstanr::cmdstan_model(ex_code_path, force_recompile=TRUE)
 ex_data_file_path = data_file_path(ex_posterior)
 
 # Run path and sampler
 ex_fit = ex_mod$pathfinder(algorithm = "multi", data = ex_data_file_path,
-  refresh = 5, num_threads = floor(parallel::detectCores() / 2), num_paths = 5,
-  psis_draws = 4000, iter = 100)
+  refresh = 5, num_threads = floor(parallel::detectCores() / 2), num_paths = 32,
+  psis_draws = 10000, iter = 60, num_elbo_draws = 5000, history_size = 12, init_alpha = 0.0000001,
+  num_draws = 20000, init = 2, tol_obj = 0, tol_grad = 0, tol_param = 0, tol_rel_grad = 0, tol_rel_obj = 0)
+
+ex_fit$summary()
 
 ex_fit_sample = ex_mod$sample(data = ex_data_file_path,
-  parallel_chains = 4)
+  parallel_chains = 5, iter_sampling = 2000, chains = 5)
 
 
 # Have a lookie
@@ -41,6 +44,9 @@ ex_fit_sample = ex_mod$sample(data = ex_data_file_path,
 ex_fit$summary()
 ex_fit_sample$summary()
 
+#params_to_get  = c("lp__", "theta", "theta1", "theta2", "mu", "log_p_z_star")
+#ex_draws = as.data.frame(posterior::as_draws_df(ex_fit$draws(params_to_get)))
+#ex_sample_draws = as.data.frame(posterior::as_draws_df(ex_fit_sample$draws(params_to_get)))
 ex_draws = as.data.frame(posterior::as_draws_df(ex_fit$draws()))
 ex_sample_draws = as.data.frame(posterior::as_draws_df(ex_fit_sample$draws()))
 
@@ -51,17 +57,21 @@ colnames(ex_sample_draws) = paste0("samp_", colnames(ex_sample_draws))
 ex_all_df = as.data.table(cbind(ex_draws, ex_sample_draws))
 
 for (base_param_name in orig_names) {
-  param_names = c(paste0(c("path_", "samp_"), base_param_name), "samp_lp__")
+  if (base_param_name == "lp__") {
+    param_names = c(paste0(c("path_", "samp_"), base_param_name))
+  } else {
+    param_names = c(paste0(c("path_", "samp_"), base_param_name), "path_lp__")
+  }
   param_dt = ex_all_df[, ..param_names]
   axis_limits = c(param_dt[, min(get(param_names[1]), get(param_names[2]))],
     param_dt[, max(get(param_names[1]), get(param_names[2]))])
   base_plot = ggplot(param_dt,
-    aes_string(x = paste0("`", param_names[1], "`"),
-      y = paste0("`", param_names[2], "`"), color = "samp_lp__")) +
+    aes_string(y = paste0("`", param_names[1], "`"),
+      x = paste0("`", param_names[2], "`"), color = "path_lp__")) +
     geom_point() +
     theme_bw() +
     xlim(axis_limits) + ylim(axis_limits) +
-    ggtitle(paste0("Comparison of ", base_param_name))
+    ggtitle(paste0("Comparison of ", base_param_name, " where top is hmc and right is pathfinder"))
   marg_plot = ggMarginal(base_plot, type = "histogram", xparams = list(bins=50), fill = "red")
   if (interactive()) {
     print(marg_plot)
@@ -75,3 +85,7 @@ for (base_param_name in orig_names) {
   }
 }
 
+
+ex_draws_theta6 = as.data.frame(posterior::as_draws_df(ex_fit$draws("theta_trans[6]")))[, 1]
+length(ex_draws_theta6)
+length(unique(ex_draws_theta6))
