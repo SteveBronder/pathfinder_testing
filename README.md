@@ -2,16 +2,16 @@ Collection of stan-dev repo branches needed to run pathfinder
 
 Use the following commands to download and install this repo
 
-```bash 
-git clone --recursive git@github.com:SteveBronder/pathfinder_testing.git
-# if you don't have ssh enabled on your local git use the following 
-# git clone --recursive https://github.com/SteveBronder/pathfinder_testing.git 
+```bash
+git clone --recurse-submodules git@github.com:SteveBronder/pathfinder_testing.git
+# if you don't have ssh enabled on your local git use the following
+# git clone --recursive https://github.com/SteveBronder/pathfinder_testing.git
 # make cmdstan
 cd pathfinder_testing/cmdstan
-echo "STAN_THREADS=true" > make/local 
-echo "O=3 -march=native -mtune=native" >> make/local 
+echo "STAN_THREADS=true" > make/local
+echo "O=3 -march=native -mtune=native" >> make/local
 make -j4 build
-cd .. 
+cd ..
 # Install branch of cmdstanr with the pathfinder in it
 R -s -e "remotes::install_local(path = './cmdstanr', force = TRUE)"
 ```
@@ -26,7 +26,7 @@ library(data.table)
 ```
 
 ```bash
-Rscript ./examples/posterior_db/posterior_db_ex.R 
+Rscript ./examples/posterior_db/posterior_db_ex.R
 ```
 
 Hopefully, that should be it and you can then run the examples in this folder!
