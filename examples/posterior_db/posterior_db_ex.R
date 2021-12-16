@@ -81,7 +81,6 @@ for (base_param_name in orig_names) {
   }
   param_dt = ex_all_df[, ..param_names]
   param_means = param_dt[, lapply(.SD, mean)]
-  param_sds = param_dt[, lapply(.SD, function(x) 2 * sd(x))]
   param_dt[, duplicate_paths := as.integer(data.table:::duplicated.data.table(param_dt, by = param_names[1]))]
   param_dt[, duplicate_paths := sum(duplicate_paths), by = c(param_names[1])]
   axis_limits = c(param_dt[, min(get(param_names[1]), get(param_names[2]))],
@@ -100,7 +99,6 @@ for (base_param_name in orig_names) {
     geom_linerange(xmin = min_sd(param_dt, param_names[2]),
       xmax = max_sd(param_dt, param_names[2]),
       y = mean_dt(param_dt, param_names[1]), color = "red", size = 1.1) +
-    theme_bw(base_size = 15) +
     theme_bw(base_size = 15) +
     theme(legend.position="bottom") +
     guides(colour=guide_colourbar(title = "Pathfinder duplicates", barwidth=30,legend.position="bottom")) +
