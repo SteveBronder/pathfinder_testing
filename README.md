@@ -5,7 +5,7 @@ Use the following commands to download and install this repo
 ```bash
 git clone --recurse-submodules git@github.com:SteveBronder/pathfinder_testing.git
 # if you don't have ssh enabled on your local git use the following
-# git clone --recursive https://github.com/SteveBronder/pathfinder_testing.git
+# git clone --recurse-submodules https://github.com/SteveBronder/pathfinder_testing.git
 # make cmdstan
 cd pathfinder_testing/cmdstan
 echo "STAN_THREADS=true" > make/local
