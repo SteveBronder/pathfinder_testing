@@ -47,9 +47,9 @@ if (TRUE) {
 } else {
   # Run path and sampler
   ex_fit = ex_mod$pathfinder(algorithm = "multi", data = ex_data_file_path,
-    refresh = 5, threads = num_cores, num_paths = 8,
-    psis_draws = 10000, iter = 50, num_elbo_draws = 500, history_size = 6, init_alpha = 0.0000001,
-    num_draws = 10000, init = 2)#, tol_obj = 0, tol_grad = 0, tol_param = 0, tol_rel_grad = 0, tol_rel_obj = 0)
+    refresh = 10, threads = num_cores, num_paths = 8,
+    psis_draws = 10000, iter = 50, num_elbo_draws = 200, history_size = 6, init_alpha = 0.0000001,
+    num_draws = 2000, init = 3)#, tol_obj = 0, tol_grad = 0, tol_param = 0, tol_rel_grad = 0, tol_rel_obj = 0)
 }
 ex_fit$time()
 
