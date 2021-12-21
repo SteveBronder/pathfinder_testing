@@ -48,7 +48,7 @@ if (TRUE) {
   # Run path and sampler
   ex_fit = ex_mod$pathfinder(algorithm = "multi", data = ex_data_file_path,
     refresh = 5, threads = num_cores, num_paths = 8,
-    psis_draws = 2000, iter = 50, num_elbo_draws = 500, history_size = 6, init_alpha = 0.0000001,
+    psis_draws = 10000, iter = 50, num_elbo_draws = 500, history_size = 6, init_alpha = 0.0000001,
     num_draws = 10000, init = 2)#, tol_obj = 0, tol_grad = 0, tol_param = 0, tol_rel_grad = 0, tol_rel_obj = 0)
 }
 ex_fit$time()
@@ -130,14 +130,16 @@ compare_params_graph = function(ex_fit, ex_alt, alt_name) {
       xlim(axis_limits) + ylim(axis_limits) +
       xlab(alt_name) +
       ylab("Pathfinder") +
-      ggtitle(paste0("Comparison of ", base_param_name, " where top is ", alt_name," and right is pathfinder"),
+      ggtitle(paste0("Comparison of ", base_param_name, " where top is ", alt_name,"\n and right is pathfinder"),
         "Crosshairs indicate means while redlines indicate 2 standard deviations")
     marg_plot = ggMarginal(base_plot, type = "histogram", xparams = list(bins=50), fill = "red")
     if (interactive()) {
       print(marg_plot)
-      user_inp = readline(prompt="Press [enter] to continue or enter q to quit")
+      user_inp = readline(prompt="Press [enter] to continue or enter q to quit: ")
       if (user_inp == "q") {
         break
+      } else if (user_inp == "browse") {
+        browser()
       }
     } else {
       print("Idk how to show graphs with Rscript :-(")
@@ -146,4 +148,4 @@ compare_params_graph = function(ex_fit, ex_alt, alt_name) {
   }
 }
 
-compare_params_graph(ex_fit, ex_fit_sample, "sample")
+compare_params_graph(ex_fit, ex_fit_sample, "nuts")
