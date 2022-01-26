@@ -31,18 +31,42 @@ num_cores = floor(parallel::detectCores() / 2)
 ex_optimize = ex_mod$optimize(data = ex_data_file_path,
   refresh = 5, algorithm = "lbfgs", threads = num_cores,
   iter = 50, history_size = 12, init_alpha = 0.0000001,
-  init = 2)#, tol_obj = 0, tol_grad = 0, tol_param = 0, tol_rel_grad = 0, tol_rel_obj = 0)
+  init = 3)#, tol_obj = 0, tol_grad = 0, tol_param = 0, tol_rel_grad = 0, tol_rel_obj = 0)
 ex_optimize$summary()
 # Run path and sampler
-ex_fit = ex_mod$pathfinder(algorithm = "single", data = ex_data_file_path,
-  refresh = 5, threads = floor(parallel::detectCores() / 2),
-  iter = 40, num_elbo_draws = 500, history_size = 6, init_alpha = 0.0000001,
-  num_draws = 10000, init = 1)#, tol_obj = 0, tol_grad = 0, tol_param = 0, tol_rel_grad = 0, tol_rel_obj = 0)
-
+if (TRUE) {
+  # Run path and sampler
+  # FIXME: idk why but this needs +1 num_draws for the number of draws you actually want
+  ex_fit = ex_mod$pathfinder(algorithm = "single", data = ex_data_file_path,
+    refresh = 5, threads = num_cores, iter = 50, num_elbo_draws = 100,
+    history_size = 6, init_alpha = 0.0000001,
+    num_draws = 10001, init = 2)#, tol_obj = 0, tol_grad = 0, tol_param = 0, tol_rel_grad = 0, tol_rel_obj = 0)
+} else {
+  # Run path and sampler
+  ex_fit = ex_mod$pathfinder(algorithm = "multi", data = ex_data_file_path,
+    refresh = 10, threads = num_cores, num_paths = 16,
+    psis_draws = 10000, iter = 50, num_elbo_draws = 100, history_size = 4, init_alpha = 0.0000001,
+    num_draws = 10000, init = 2)#, tol_obj = 0, tol_grad = 0, tol_param = 0, tol_rel_grad = 0, tol_rel_obj = 0)
+}
 ex_fit$summary()
 
-ex_fit_sample = ex_mod$sample(data = ex_data_file_path, threads_per_chain = num_cores,
-  parallel_chains = 5, iter_sampling = 2000, chains = 5)
+ex_fit_vb = ex_mod$variational(data = ex_data_file_path,
+  refresh = 5, threads = num_cores, init = 2, output_samples = 10000)
+ex_fit_vb$time()
+
+ex_fit_sample = ex_mod$sample(data = ex_data_file_path,
+  parallel_chains = 5, iter_sampling = 2000, chains = 5, threads_per_chain=num_cores)
+
+
+# Have a lookie
+
+ex_fit$summary()
+ex_fit_vb$summary()
+ex_fit_sample$summary()
+
+ex_fit$time()$total
+ex_fit_vb$time()$total
+ex_fit_sample$time()$total
 
 
 # Have a lookie
