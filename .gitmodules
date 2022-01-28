@@ -1,6 +1,6 @@
 [submodule "cmdstanr"]
 	path = cmdstanr
-	url = git@github.com:stan-dev/cmdstanr.git
+	url = https://github.com/stan-dev/cmdstanr
 	branch = feature/pathfinder
 [submodule "cmdstan"]
 	path = cmdstan
