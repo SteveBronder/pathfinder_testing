@@ -31,7 +31,7 @@ num_cores = floor(parallel::detectCores() / 2)
 ex_optimize = ex_mod$optimize(data = ex_data_file_path,
   refresh = 5, algorithm = "lbfgs", threads = num_cores,
   iter = 50, history_size = 12, init_alpha = 0.0000001,
-  init = 3)#, tol_obj = 0, tol_grad = 0, tol_param = 0, tol_rel_grad = 0, tol_rel_obj = 0)
+  init = 0)#, tol_obj = 0, tol_grad = 0, tol_param = 0, tol_rel_grad = 0, tol_rel_obj = 0)
 ex_optimize$summary()
 # Run path and sampler
 if (TRUE) {
@@ -40,7 +40,7 @@ if (TRUE) {
   ex_fit = ex_mod$pathfinder(algorithm = "single", data = ex_data_file_path,
     refresh = 5, threads = num_cores, iter = 50, num_elbo_draws = 100,
     history_size = 6, init_alpha = 0.0000001,
-    num_draws = 10001, init = 2)#, tol_obj = 0, tol_grad = 0, tol_param = 0, tol_rel_grad = 0, tol_rel_obj = 0)
+    num_draws = 10001, init = 10)#, tol_obj = 0, tol_grad = 0, tol_param = 0, tol_rel_grad = 0, tol_rel_obj = 0)
 } else {
   # Run path and sampler
   ex_fit = ex_mod$pathfinder(algorithm = "multi", data = ex_data_file_path,

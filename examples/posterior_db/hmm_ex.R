@@ -48,8 +48,8 @@ if (TRUE) {
   # Run path and sampler
   ex_fit = ex_mod$pathfinder(algorithm = "multi", data = ex_data_file_path,
     refresh = 10, threads = num_cores, num_paths = 8,
-    psis_draws = 10000, iter = 50, num_elbo_draws = 200, history_size = 6, init_alpha = 0.0000001,
-    num_draws = 2000, init = 3)#, tol_obj = 0, tol_grad = 0, tol_param = 0, tol_rel_grad = 0, tol_rel_obj = 0)
+    psis_draws = 10000, iter = 2000, num_elbo_draws = 800, history_size = 8, num_eval_attempts = 100, init_alpha = 0.1,
+    num_draws = 2000, init = 2)
 }
 ex_fit$time()
 
