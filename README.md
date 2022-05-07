@@ -10,7 +10,7 @@ git clone --recurse-submodules git@github.com:SteveBronder/pathfinder_testing.gi
 cd pathfinder_testing/cmdstan
 echo "STAN_THREADS=true" > make/local
 echo "O=3 -march=native -mtune=native" >> make/local
-make -j24 build
+make -j$(nproc) build
 cd ..
 # Install branch of cmdstanr with the pathfinder in it, using renv to ensure other projects'
 # use of vanilla cmdstanr aren't compromised
