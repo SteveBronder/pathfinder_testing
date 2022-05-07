@@ -12,8 +12,10 @@ echo "STAN_THREADS=true" > make/local
 echo "O=3 -march=native -mtune=native" >> make/local
 make -j24 build
 cd ..
-# Install branch of cmdstanr with the pathfinder in it
-R -s -e "remotes::install_local(path = './cmdstanr', force = TRUE)"
+# Install branch of cmdstanr with the pathfinder in it, using renv to ensure other projects'
+# use of vanilla cmdstanr aren't compromised
+R -s -e "install.packages('renv');renv::init(bare=T)"
+R -s -e "renv::install('./cmdstanr',type='source')"
 ```
 
 If you have the necessary packages (listed below) the following script should run without error.
